@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "FormPilot",
+  "version": "0.1.0",
+  "description": "Understand any form. Fill it intelligently.",
+  "action": {
+    "default_title": "FormPilot",
+    "default_popup": "src/popup/index.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+F" },
+      "description": "Open FormPilot"
+    }
+  },
+  "options_page": "src/options/index.html",
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ]
+}

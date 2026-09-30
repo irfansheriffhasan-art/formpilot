@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FormPilot test forms</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; line-height: 1.5; color: #1d2433; }
+    h1 { margin-bottom: 4px; }
+    section.test { border-top: 2px solid #d9dfe8; margin-top: 36px; padding-top: 8px; }
+    .expect { background: #eef6f6; border-left: 3px solid #0b6e6e; padding: 8px 12px; font-size: 14px; }
+    .expect ul { margin: 4px 0 0; padding-left: 20px; }
+    label, .row { display: block; margin: 10px 0; }
+    input, select, textarea { padding: 6px; font: inherit; }
+    table { border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    .honeypot { position: absolute; left: -9999px; top: -9999px; }
+    .sr-radio { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .pill { display: inline-block; border: 1px solid #999; border-radius: 16px; padding: 3px 12px; cursor: pointer; }
+    .sr-radio:checked + .pill { background: #0b6e6e; color: white; }
+  </style>
+</head>
+<body>
+  <h1>FormPilot test forms</h1>
+  <p>
+    Scan this page with FormPilot. Each section says what should be detected.
+    Grand total expected: <strong>39 fields</strong>
+    (40 after clicking “Add emergency phone” in Test 5; the open popup notices it by itself).
+  </p>
+  <div class="expect">
+    <b>Filling (Phases 7–10).</b> Use a profile with different current and permanent addresses. Expect:
+    <ul>
+      <li>The two “City” fields in Test 4 filled from different addresses; Emergency Contact “Name”/“Phone” not filled.</li>
+      <li>“Date of Birth (DD/MM/YYYY)” written as DD/MM/YYYY; “Mobile Contact (10 digits)” without +91.</li>
+      <li>“Applicant's Legal Name”, “Name as per certificate” and the unlabelled-state “State” marked <b>Confirm</b>, not ticked.</li>
+      <li>Aadhaar (with a custom field “Aadhaar”) needs a tick and a second confirmation click.</li>
+      <li>Nothing in Test 6 is ever filled; checkboxes stay unticked; the form is never submitted.</li>
+      <li>Change a row’s “Fill with”, fill, then scan again: the row shows <b>Learned</b>.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 1: Basic labels</h2>
+    <form id="test1">
+      <label for="t1-name">Full Name</label>
+      <input id="t1-name" name="fullName" type="text" required />
+
+      <label for="t1-email">Email</label>
+      <input id="t1-email" name="email" type="email" />
+
+      <label for="t1-phone">Phone *</label>
+      <input id="t1-phone" name="phone" type="tel" />
+    </form>
+    <div class="expect">Expect 3 fields, all with label from <b>label</b>:
+      “Full Name” (required), “Email”, “Phone” (required via *). Section: “Test 1: Basic labels”.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 2: Wrapping labels, formal wording</h2>
+    <form id="test2">
+      <label>Applicant's Legal Name: <input name="applicant_legal_name" /></label>
+      <label>Electronic Mail Address <input name="e_mail" type="email" /></label>
+      <label>
+        Mobile Contact
+        <span>(10 digits)</span>
+        <input name="mobile" type="tel" maxlength="10" />
+      </label>
+    </form>
+    <div class="expect">Expect 3 fields from <b>label</b>:
+      “Applicant's Legal Name”, “Electronic Mail Address”, “Mobile Contact (10 digits)”.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 3: ARIA and placeholders</h2>
+    <form id="test3">
+      <div class="row"><input aria-label="Candidate Name" name="c1" /></div>
+
+      <span id="mail-label">Mail ID</span>
+      <div class="row"><input aria-labelledby="mail-label" name="c2" type="email" /></div>
+
+      <div class="row"><input placeholder="Contact Number" name="c3" type="tel" /></div>
+    </form>
+    <div class="expect">Expect 3 fields:
+      <ul>
+        <li>“Candidate Name” from <b>aria-label</b></li>
+        <li>“Mail ID” from <b>aria-labelledby</b></li>
+        <li>“Contact Number” from <b>placeholder</b></li>
+      </ul></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 4: Same words, different context</h2>
+    <form id="test4">
+      <fieldset>
+        <legend>Permanent Address</legend>
+        <label for="p-line1">Address Line 1</label><input id="p-line1" />
+        <label for="p-city">City</label><input id="p-city" />
+        <label for="p-pin">Pincode</label><input id="p-pin" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Current Address</legend>
+        <label for="c-line1">Address Line 1</label><input id="c-line1" />
+        <label for="c-city">City</label><input id="c-city" />
+        <label for="c-pin">Pincode</label><input id="c-pin" />
+      </fieldset>
+
+      <h3>Emergency Contact</h3>
+      <label for="e-name">Name</label><input id="e-name" />
+      <label for="e-phone">Phone</label><input id="e-phone" type="tel" />
+    </form>
+    <div class="expect">Expect 8 fields. The two “City” fields must show different sections:
+      “Permanent Address” and “Current Address”. Emergency “Name” and “Phone” show section “Emergency Contact”.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 5: Messy real-world markup</h2>
+    <form id="test5">
+      <h3>Orphan labels and helper text</h3>
+      <div class="row">
+        <label>Name as per certificate</label>
+        <small>Use capital letters</small>
+        <input name="x_91" />
+      </div>
+
+      <div class="row">
+        <div class="lbl">Father's / Guardian's Name</div>
+        <div class="ctrl"><div><input id="input-12" /></div></div>
+      </div>
+
+      <div class="row">Date of Birth (DD/MM/YYYY): <input name="ctl00$Main$txtDOB" id="ctl00_Main_txtDOB" /></div>
+
+      <div class="row"><input name="applicant_full_name" /></div>
+
+      <div class="row"><input id="mat-input-3" /></div>
+
+      <h3>Table layout (common on government sites)</h3>
+      <table>
+        <tr><td>Name of Candidate</td><td><input name="t_a" /></td></tr>
+        <tr><td>Nationality</td><td><input name="t_b" /></td><td>Religion</td><td><input name="t_c" /></td></tr>
+      </table>
+
+      <h3>Education details</h3>
+      <table>
+        <thead><tr><th>Qualification</th><th>Board / University</th><th>Year of Passing</th><th>Percentage</th></tr></thead>
+        <tbody>
+          <tr><td>SSLC</td><td><input name="e1b" /></td><td><input name="e1y" /></td><td><input name="e1p" /></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Choices</h3>
+      <fieldset>
+        <legend>Gender</legend>
+        <label><input type="radio" name="gender" value="M" /> Male</label>
+        <label><input type="radio" name="gender" value="F" /> Female</label>
+        <label><input type="radio" name="gender" value="O" /> Other</label>
+      </fieldset>
+
+      <div class="row">
+        <span>Category</span>
+        <input type="radio" class="sr-radio" name="category" id="cat-gen" value="GEN" /><label class="pill" for="cat-gen">General</label>
+        <input type="radio" class="sr-radio" name="category" id="cat-obc" value="OBC" /><label class="pill" for="cat-obc">OBC</label>
+      </div>
+
+      <label for="state">State</label>
+      <select id="state" name="state">
+        <option value="">Select state</option>
+        <option>Tamil Nadu</option>
+        <option>Kerala</option>
+        <option>Karnataka</option>
+      </select>
+
+      <label for="about">Statement of purpose</label>
+      <textarea id="about" name="sop"></textarea>
+
+      <h3>Web component (shadow DOM)</h3>
+      <fp-test-input></fp-test-input>
+
+      <h3>Dynamic field</h3>
+      <div id="dynamic-slot"></div>
+      <button type="button" id="add-field">Add emergency phone</button>
+    </form>
+    <div class="expect">Expect 16 fields:
+      <ul>
+        <li>“Name as per certificate” from <b>nearby text</b> (the orphan label wins over “Use capital letters”)</li>
+        <li>“Father's / Guardian's Name” from <b>nearby text</b></li>
+        <li>“Date of Birth (DD/MM/YYYY)” from <b>nearby text</b></li>
+        <li>“applicant full name” from <b>name attribute</b></li>
+        <li><b>No label found</b> for id="mat-input-3" (meaningless id, correctly ignored)</li>
+        <li>“Name of Candidate”, “Nationality”, “Religion” from <b>nearby text</b> (table cells)</li>
+        <li>“Board / University (SSLC)”, “Year of Passing (SSLC)”, “Percentage (SSLC)” from <b>nearby text</b> (column header plus row label)</li>
+        <li>“Gender” (one radio field, 3 options, from the legend) and “Category” (styled radios, 2 options, from nearby text)</li>
+        <li>“State” (select-one), “Statement of purpose” (textarea)</li>
+        <li>“Roll Number” inside the web component</li>
+        <li>After clicking the button and scanning again: “Emergency Phone” appears (one more field)</li>
+      </ul></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 6: Must be skipped</h2>
+    <form id="test6">
+      <input type="hidden" name="csrf" value="abc" />
+      <label for="pw">Create password</label><input id="pw" type="password" />
+      <label><input type="checkbox" name="agree" /> I agree to the terms</label>
+      <label for="dis">Disabled field</label><input id="dis" disabled />
+      <input class="honeypot" name="website" aria-label="Website" />
+      <div style="display:none"><label for="hid">Hidden by CSS</label><input id="hid" /></div>
+      <label for="cc">Card Number</label><input id="cc" name="cardNumber" />
+      <label for="cvv">CVV</label><input id="cvv" name="cvv" maxlength="3" />
+      <label for="acc">Bank Account No.</label><input id="acc" />
+      <label for="ifsc">IFSC Code</label><input id="ifsc" />
+      <label for="otp">Enter OTP</label><input id="otp" autocomplete="one-time-code" />
+      <label for="cap">Type the captcha</label><input id="cap" />
+      <label for="upload">Upload photo</label><input id="upload" type="file" />
+
+      <!-- Harvesting tricks: fields a person can't see, with tempting labels. -->
+      <div style="height:0; overflow:hidden"><label for="h-mobile">Mobile</label><input id="h-mobile" name="mobile2" /></div>
+      <div style="position:relative"><input aria-label="Address" name="addr_hidden" style="position:absolute; clip:rect(0 0 0 0); width:120px; height:20px" /></div>
+      <input aria-label="Date of birth" name="dob_tiny" style="width:2px; height:2px; padding:0; border:0" />
+      <input type="submit" value="Submit" />
+    </form>
+    <div class="expect">Expect 0 fields from this section. The popup's “Skipped” line should include
+      hidden (6: hidden input, honeypot, display:none, zero-height wrapper, clipped, 2px), password (1), checkbox (1), disabled (1),
+      payment or bank (4), OTP or captcha (2), and button or other (2: file + submit).</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 7: Sensitive and read-only (detected, but flagged)</h2>
+    <form id="test7">
+      <label for="aadhaar">Aadhaar Number</label><input id="aadhaar" />
+      <label for="pan">PAN</label><input id="pan" />
+      <label for="passport">Passport No.</label><input id="passport" />
+      <label for="appid">Application ID</label><input id="appid" value="APP-2026-001" readonly />
+    </form>
+    <div class="expect">Expect 4 fields. The first three show the <b>Sensitive</b> tag
+      (orange outline on the page). “Application ID” shows “read-only”.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 8: Outside a form, and inside a frame</h2>
+    <label for="loose">Referral Code</label><input id="loose" />
+    <iframe title="Embedded form" srcdoc="<label>Inside frame <input></label>" height="60"></iframe>
+    <div class="expect">Expect 1 field (“Referral Code”, not in any form). The frame's field is
+      <b>not</b> detected; instead the popup says the page has 1 embedded frame.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="test">
+    <h2>Test 9: Form that sends data to another site</h2>
+    <form id="test9" action="https://collect.example.net/submit" method="post">
+      <label for="t9-email">Email</label><input id="t9-email" type="email" />
+    </form>
+    <div class="expect">Expect 1 field (“Email”). When it is ticked, the popup warns
+      “This form sends your details to a different website: collect.example.net” and asks for a second click.</div>
+  </section>
+
+  <script>
+    // A minimal web component with an input inside an OPEN shadow root.
+    customElements.define('fp-test-input', class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = '<label for="roll">Roll Number</label> <input id="roll" name="roll_no">';
+      }
+    });
+
+    // Simulates a form that grows after user interaction (Phase 9 will
+    // detect this automatically; for now, press "Scan again").
+    document.getElementById('add-field').addEventListener('click', (event) => {
+      const slot = document.getElementById('dynamic-slot');
+      if (slot.children.length) return;
+      slot.innerHTML = '<label for="em-phone">Emergency Phone</label><input id="em-phone" type="tel">';
+      event.target.disabled = true;
+    });
+  </script>
+</body>
+</html>

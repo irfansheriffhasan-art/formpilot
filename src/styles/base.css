@@ -1,0 +1,100 @@
+/*
+ * Shared by the popup and the options page: color tokens, typography,
+ * buttons and form controls. Page-specific layout lives in each page's CSS.
+ */
+:root {
+  --ink: #16233a;
+  --muted: #5a6780;
+  --paper: #f5f7fa;
+  --panel: #ffffff;
+  --line: #d9dfe8;
+  --signal: #0b6e6e;   /* primary action + success */
+  --alert: #b3401f;    /* errors + destructive actions */
+  --caution: #8a5a00;  /* needs confirmation, sensitive */
+  --signal-soft: #e0f1f0;
+  --caution-soft: #fbecc8;
+
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e6ebf2;
+    --muted: #97a3b8;
+    --paper: #121a27;
+    --panel: #1a2433;
+    --line: #2c3a4f;
+    --signal: #4cc2bd;
+    --alert: #f08a6c;
+    --caution: #f5c96a;
+    --signal-soft: #173a3b;
+    --caution-soft: #3d2f10;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ---------- Buttons ---------- */
+.button {
+  font-weight: 600;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--signal);
+  color: var(--paper);
+  cursor: pointer;
+}
+.button:hover:not(:disabled) { filter: brightness(1.08); }
+.button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.button--quiet {
+  background: transparent;
+  color: var(--signal);
+  border-color: var(--line);
+}
+.button--danger {
+  background: transparent;
+  color: var(--alert);
+}
+.button--danger:hover:not(:disabled) { border-color: var(--alert); filter: none; }
+
+/* ---------- Form controls ---------- */
+input:not([type="checkbox"]), select, textarea {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+}
+textarea { resize: vertical; }
+
+[aria-invalid="true"] { border-color: var(--alert); }
+
+/* ---------- Passphrase forms (setup / unlock) ---------- */
+.vault-form { display: grid; gap: 8px; max-width: 360px; }
+.vault-form--wide { max-width: 460px; }
+.vault-form__title { margin: 0; font-size: 17px; }
+.vault-form__note { margin: 0; color: var(--muted); }
+.vault-form__label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.vault-form__hint { margin: 0; font-size: 12px; color: var(--muted); }
+.vault-form__check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; margin: 6px 0; }
+.vault-form__check input { margin-top: 3px; }
+.vault-form__error { margin: 0; color: var(--alert); font-size: 13px; }
+.vault-form .button { justify-self: start; }
+.vault-form__forgot { padding-left: 0; font-weight: 500; }
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}

@@ -1,0 +1,146 @@
+/* Two-column layout: fixed sidebar, scrolling editor. */
+.options {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 18px;
+  border-right: 1px solid var(--line);
+}
+
+.brand { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+
+.sidebar__heading { margin: 0 0 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.sidebar__note { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+.sidebar__data { margin-top: auto; }
+
+.profile-list ul { list-style: none; margin: 0 0 10px; padding: 0; }
+.profile-list__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border: none;
+  border-left: 3px solid transparent;
+  background: none;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}
+.profile-list__item:hover { background: var(--panel); }
+.profile-list__item.is-selected {
+  border-left-color: var(--signal);
+  background: var(--panel);
+  font-weight: 600;
+}
+
+/* ---------- Workspace ---------- */
+.workspace { padding: 28px 36px 64px; max-width: 800px; }
+
+.muted { color: var(--muted); }
+
+.notice {
+  margin: 0 0 20px;
+  padding: 9px 12px;
+  border-left: 3px solid var(--signal);
+  background: var(--panel);
+}
+.notice--error { border-left-color: var(--alert); }
+
+.empty { padding-top: 48px; max-width: 420px; }
+.empty h2 { margin: 0 0 6px; }
+.empty .button { margin-top: 12px; }
+
+/* ---------- Editor ---------- */
+.editor { display: grid; gap: 28px; }
+
+.section {
+  margin: 0;
+  padding: 18px 0 0;
+  border: none;
+  border-top: 1px solid var(--line);
+}
+.section__title { padding: 0; font-size: 16px; font-weight: 700; }
+.section__description { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+.section__action { margin-bottom: 12px; }
+
+.section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  margin-top: 12px;
+}
+
+.field { display: grid; gap: 4px; align-content: start; }
+.field--wide { grid-column: 1 / -1; }
+.field__label { font-size: 13px; font-weight: 600; }
+.field__hint { margin: 0; font-size: 12px; color: var(--muted); }
+.field__error { margin: 0; font-size: 12px; color: var(--alert); }
+
+/* Custom field rows: name | value | checkbox | remove */
+.custom-list { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 12px; }
+.custom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 10px;
+  align-items: end;
+}
+.custom-row__cell { display: grid; gap: 4px; }
+.custom-row__check { display: flex; align-items: center; gap: 6px; font-size: 13px; padding-bottom: 8px; }
+.custom-row__error { grid-column: 1 / -1; }
+
+.editor__actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.editor__unsaved { font-size: 13px; color: var(--muted); }
+.editor__delete { margin-left: auto; }
+
+@media (max-width: 720px) {
+  .options { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+  .workspace { padding: 20px; }
+  .section__grid, .custom-row { grid-template-columns: 1fr; }
+}
+
+/* ---------- Learned corrections ---------- */
+.learned { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.learned li { display: flex; align-items: center; gap: 6px; }
+.learned__host { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learned__count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.learned__remove {
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+}
+.learned__remove:hover { color: var(--alert); }
+
+/* ---------- Setup / unlock gate ---------- */
+.gate { max-width: 520px; margin: 0 auto; padding: 64px 24px; display: grid; gap: 24px; }
+
+/* ---------- Security panel ---------- */
+.security__change { margin-top: 10px; font-size: 13px; }
+.security__change summary { cursor: pointer; color: var(--signal); }
+.security__form { display: grid; gap: 6px; margin-top: 8px; }
+.security__form label { font-weight: 600; }
+.security__form .button { justify-self: start; margin-top: 4px; }
+.security__ok { margin: 0; color: var(--signal); }
+.security__error { margin: 0; color: var(--alert); }
