@@ -29,7 +29,7 @@ FormPilot is a Chrome/Edge extension that reads a web form, works out what each 
 You need [Node.js](https://nodejs.org/) 20 or newer.
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/irfansheriffhasan-art/formpilot.git
 cd formpilot
 npm install
 npm run build
